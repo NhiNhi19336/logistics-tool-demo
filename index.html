@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Logistics</title>
+<style>
+:root{--bg:#eef1f3;--ink:#14232c;--mute:#5d6e78;--line:#cfd8de;--field:#fff;--ok:#1b8049;--warn:#a96b0c;--info:#2764b0}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1519;--ink:#e6edf1;--mute:#93a4ae;--line:#26343d;--field:#16212a;--ok:#4cc38f;--warn:#e3b24e;--info:#6eaaf0}}
+*{box-sizing:border-box}
+body{margin:0 auto;max-width:760px;padding:14px 14px 28px;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,sans-serif}
+h1{font-size:20px;margin:2px 0 12px}
+h2{font-size:15px;margin:0 0 10px}
+h2 .st{margin-left:8px}
+h3{font-size:13px;color:var(--mute);margin:12px 0 0;font-weight:600}
+section{border-top:3px solid var(--ink);padding-top:10px;margin-top:22px}
+.clocks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.clk{position:relative;color:#fff;border-radius:14px;padding:12px 8px;text-align:center}
+.clk b{display:block;font-size:13px;font-weight:600;padding:0 14px}
+.clk small{display:block;font-size:12px;opacity:.8}
+.t{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2;margin:4px 0 2px}
+.d{font-size:12px;color:var(--mute);margin:2px 0 6px}
+.clk .d{color:#fff;opacity:.85;margin:0 0 8px}
+.ovl{font-size:13px;font-weight:600;text-align:center;margin:10px 0}
+.st{display:inline-block;font-size:12px;font-weight:600;padding:1px 9px;border:1px solid;border-radius:99px}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.info{color:var(--info)}.off{color:var(--mute)}
+.clk .st{color:#fff;border-color:rgba(255,255,255,.7)}
+.clk .st.off{opacity:.75}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+label{flex:1;min-width:90px;font-size:12px;color:var(--mute)}
+label i{display:block;font-style:normal}
+input,select,button{display:block;width:100%;margin-top:4px;padding:9px 10px;font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px}
+button{width:auto;margin:0;background:var(--ink);color:var(--bg);border:0;font-weight:600;cursor:pointer}
+button:disabled{opacity:.5}
+.x{position:absolute;top:2px;right:4px;padding:0 7px;background:none;color:#fff;font-size:20px;line-height:1.3;opacity:.7}
+.r{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--line)}
+.r span{color:var(--mute)}
+.r.hl{font-weight:700;border-left:4px solid var(--ink);padding-left:8px}
+.r.hl span{color:inherit}
+</style>
+</head>
+<body>
+<h1 data-i="t"></h1>
+<div class="row">
+ <label><i data-i="hc"></i><select id="hc"></select></label>
+ <label><i>Language / 语言 / Ngôn ngữ</i><select id="lg"><option value="vi">Tiếng Việt<option value="en">English<option value="zh">中文</select></label>
+</div>
+
+<div class="clocks" id="ck"></div>
+<p class="ovl" id="ov"></p>
+<select id="az"></select>
+
+<section id="c2">
+ <h2><span data-i="cv"></span><span class="st" id="bd"></span></h2>
+ <div class="row">
+  <label><i data-i="amt"></i><input id="amt" value="1000"></label>
+  <label><i data-i="cf"></i><select id="cf"></select></label>
+  <label><i data-i="ct"></i><select id="ct"></select></label>
+ </div>
+ <div class="row">
+  <label><i id="rl"></i><input id="rv"></label>
+  <label><i data-i="fee"></i><input id="fee" value="0"></label>
+ </div>
+ <div id="conv"></div>
+ <p class="d" id="info"></p>
+ <button id="rf" data-i="ref"></button>
+</section>
+
+<section id="c3">
+ <h2 data-i="cb"></h2>
+ <div class="row">
+  <label><i data-i="len"></i><input id="L"></label>
+  <label><i data-i="wid"></i><input id="W"></label>
+  <label><i data-i="hei"></i><input id="H"></label>
+ </div>
+ <div class="row">
+  <label><i data-i="pcs"></i><input id="n" value="1"></label>
+  <label><i data-i="kg"></i><input id="kg"></label>
+ </div>
+ <div class="row">
+  <label><i data-i="mode"></i><select id="mode"><option value="167" data-i="air"><option value="200" data-i="exp"><option value="333" data-i="road"><option value="1000" data-i="sea"></select></label>
+  <label><i data-i="kc"></i><input id="kc" value="167"></label>
+ </div>
+ <div class="row">
+  <label><i data-i="pr"></i><input id="pr"></label>
+  <label><i data-i="pu"></i><select id="pu"><option value="kg" data-i="pkg"><option value="cbm" data-i="pcbm"></select></label>
+  <label><i data-i="pc"></i><select id="pc"></select></label>
+ </div>
+ <div id="fr"></div>
+</section>
+
+<section id="c4">
+ <h2 data-i="lc"></h2>
+ <div class="row">
+  <label><i data-i="gv"></i><input id="gv"></label>
+  <label><i data-i="gf"></i><input id="gf"></label>
+  <label><i data-i="pc"></i><select id="gc"></select></label>
+ </div>
+ <div class="row">
+  <label><i data-i="gi"></i><input id="gi" value="0"></label>
+  <label><i data-i="gd"></i><input id="gd" value="0"></label>
+  <label><i data-i="gt"></i><input id="gt" value="0"></label>
+ </div>
+ <div class="row">
+  <label><i data-i="go"></i><input id="go" value="0"></label>
+  <label><i data-i="gq"></i><input id="gq" value="1"></label>
+ </div>
+ <div id="lr"></div>
+</section>
+
+<p class="d" data-i="note" style="margin-top:20px"></p>
+
+<script>
+const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,'0'),num=id=>parseFloat($(id).value)||0;
+const ph=(s,o)=>s.replace(/\{(\w)\}/g,(m,k)=>o[k]),fd=m=>Math.floor(m/60)+'h '+m%60+'m';
+document.querySelectorAll('input').forEach(i=>{i.type='number';i.step='any';i.inputMode='decimal'});
+
+/* NGÔN NGỮ: muốn thêm, copy 1 khối, dịch, rồi thêm <option> vào #lg và LOC/HOME */
+const LG={
+vi:{t:'Trợ lý logistics xuyên quốc gia',hc:'Tiền tệ chính',add:'Thêm quốc gia',on:'Đang làm việc',off:'Ngoài giờ',we:'Cuối tuần',wd:['CN','T2','T3','T4','T5','T6','T7'],
+ov1:'Tất cả đang cùng giờ làm việc, còn {d}',ov2:'Giờ làm việc trùng nhau sau {d}, kéo dài {l}',ov3:'Không có giờ làm việc trùng nhau trong 7 ngày tới',
+cv:'Quy đổi tiền',amt:'Số tiền',cf:'Từ',ct:'Sang',fee:'Phụ phí (%)',rate:'Tỷ giá',ref:'Cập nhật lại',b_live:'Online',b_saved:'Đã lưu',b_man:'Nhập tay',b_def:'Số tạm',upd:'Cập nhật',from:'từ',none:'Chưa có tỷ giá online, hãy nhập tay.',ld:'Đang lấy tỷ giá...',fail:'Không kết nối được nguồn tỷ giá (mạng chặn hoặc chậm), đang dùng số đã lưu hoặc nhập tay.',
+cb:'CBM và cước vận chuyển',len:'Dài (cm)',wid:'Rộng (cm)',hei:'Cao (cm)',pcs:'Số kiện',kg:'Cân mỗi kiện (kg)',mode:'Loại hình',air:'Hàng không',exp:'Chuyển phát nhanh',road:'Đường bộ',sea:'Đường biển',kc:'Hệ số kg/CBM',pr:'Đơn giá',pu:'Tính theo',pkg:'Mỗi kg tính cước',pcbm:'Mỗi CBM',pc:'Tiền tệ',vol:'Tổng thể tích',rw:'Cân thực',vw:'Cân quy đổi',cw:'Cân tính cước',cont:'Số container ước tính',cost:'Tiền cước',
+lc:'Giá hàng về kho',gv:'Giá hàng (FOB)',gf:'Cước vận chuyển',gi:'Bảo hiểm (%)',gd:'Thuế nhập khẩu (%)',gt:'VAT/GST (%)',go:'Phí khác',gq:'Số lượng',duty:'Thuế nhập khẩu',land:'Tổng chi phí về kho',unit:'Chi phí mỗi đơn vị',
+note:'Giờ lấy từ đồng hồ máy, không cần mạng. Tỷ giá lấy từ API miễn phí (nguồn thường cập nhật khoảng 1 lần mỗi ngày), tự làm mới mỗi 10 phút khi có mạng. Thuế nhập khẩu tính trên CIF, VAT tính trên CIF cộng thuế nhập khẩu. Số container chỉ là ước tính, hãy hỏi hãng tàu để biết chính xác.'},
+en:{t:'Cross-border logistics assistant',hc:'Home currency',add:'Add country',on:'Open',off:'After hours',we:'Weekend',wd:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+ov1:'Everyone is open now, {d} left',ov2:'Next shared working window in {d}, lasting {l}',ov3:'No shared working hours in the next 7 days',
+cv:'Currency converter',amt:'Amount',cf:'From',ct:'To',fee:'Surcharge (%)',rate:'Rate',ref:'Refresh',b_live:'Online',b_saved:'Saved',b_man:'Manual',b_def:'Placeholder',upd:'Updated',from:'from',none:'No online rate yet, enter one manually.',ld:'Fetching rates...',fail:'Could not reach any rate source (network blocked or slow). Using the saved or manual rate.',
+cb:'CBM and freight',len:'Length (cm)',wid:'Width (cm)',hei:'Height (cm)',pcs:'Pieces',kg:'Weight per piece (kg)',mode:'Mode',air:'Air freight',exp:'Express',road:'Road',sea:'Sea freight',kc:'kg per CBM',pr:'Unit price',pu:'Charged per',pkg:'Chargeable kg',pcbm:'CBM',pc:'Currency',vol:'Total volume',rw:'Actual weight',vw:'Volumetric weight',cw:'Chargeable weight',cont:'Estimated containers',cost:'Freight cost',
+lc:'Landed cost',gv:'Goods value (FOB)',gf:'Freight',gi:'Insurance (%)',gd:'Import duty (%)',gt:'VAT/GST (%)',go:'Other fees',gq:'Quantity',duty:'Import duty',land:'Total landed cost',unit:'Cost per unit',
+note:'Time comes from your device clock, no internet needed. Rates come from free APIs (usually updated about once a day) and refresh every 10 minutes when online. Import duty is applied to CIF, VAT to CIF plus duty. Container counts are rough estimates; confirm with your carrier.'},
+zh:{t:'跨境物流助手',hc:'本位币',add:'添加国家',on:'上班中',off:'下班',we:'周末',wd:['周日','周一','周二','周三','周四','周五','周六'],
+ov1:'各地当前同时上班，还剩 {d}',ov2:'下一个共同上班时段：{d} 后，持续 {l}',ov3:'未来 7 天没有共同上班时段',
+cv:'货币换算',amt:'金额',cf:'从',ct:'换成',fee:'附加费 (%)',rate:'汇率',ref:'刷新',b_live:'在线',b_saved:'已保存',b_man:'手动',b_def:'临时值',upd:'更新于',from:'来源',none:'暂无在线汇率，请手动输入。',ld:'正在获取汇率...',fail:'无法连接汇率来源（网络被屏蔽或过慢），正在使用已保存或手动输入的汇率。',
+cb:'体积 (CBM) 与运费',len:'长 (cm)',wid:'宽 (cm)',hei:'高 (cm)',pcs:'件数',kg:'每件重量 (kg)',mode:'运输方式',air:'空运',exp:'快递',road:'陆运',sea:'海运',kc:'每 CBM 折算公斤',pr:'单价',pu:'计费方式',pkg:'每计费公斤',pcbm:'每 CBM',pc:'币种',vol:'总体积',rw:'实际重量',vw:'体积重量',cw:'计费重量',cont:'预估柜数',cost:'运费',
+lc:'到岸成本',gv:'货值 (FOB)',gf:'运费',gi:'保险 (%)',gd:'进口关税 (%)',gt:'增值税/GST (%)',go:'其他费用',gq:'数量',duty:'进口关税',land:'到仓总成本',unit:'单件成本',
+note:'时间取自设备时钟，无需联网。汇率来自免费 API（通常每天更新约一次），联网时每 10 分钟自动刷新。关税按 CIF 计算，增值税按 CIF 加关税计算。柜数仅为粗略估算，请向船公司确认。'}
+};
+const LOC={vi:'vi-VN',en:'en-US',zh:'zh-CN'},HOME={vi:'VND',en:'USD',zh:'CNY'};
+
+/* QUỐC GIA: mã: [múi giờ, giờ mở, giờ đóng, thành phố nếu cần]. Thêm nước = thêm 1 dòng */
+const C={VN:['Asia/Ho_Chi_Minh',8,17],CN:['Asia/Shanghai',9,18],HK:['Asia/Hong_Kong',9,18],TW:['Asia/Taipei',9,18],JP:['Asia/Tokyo',9,18],KR:['Asia/Seoul',9,18],TH:['Asia/Bangkok',9,18],SG:['Asia/Singapore',9,18],MY:['Asia/Kuala_Lumpur',9,18],ID:['Asia/Jakarta',9,17],IN:['Asia/Kolkata',9,18],AE:['Asia/Dubai',9,18],GB:['Europe/London',9,17],DE:['Europe/Berlin',9,17],NL:['Europe/Amsterdam',9,17],'US-NY':['America/New_York',9,17,'New York'],'US-LA':['America/Los_Angeles',9,17,'Los Angeles'],AU:['Australia/Sydney',9,17]};
+const D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const CUR=['USD','CNY','VND','EUR','JPY','KRW','THB','SGD','MYR','IDR','INR','HKD','TWD','AED','GBP','AUD','CAD'];
+const DEF={USD:1,CNY:7.2,VND:26300,EUR:.86,JPY:150,KRW:1400,THB:33,SGD:1.3,MYR:4.3,IDR:16500,INR:88,HKD:7.8,TWD:31,AED:3.67,GBP:.75,AUD:1.5,CAD:1.4};
+const CT=[['20GP',28,21],['40GP',58,26],['40HQ',68,26]]; /* [tên, CBM thực dùng, tải trọng tấn] */
+const SRC=['https://open.er-api.com/v6/latest/USD','https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json','https://gcore.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json','https://latest.currency-api.pages.dev/v1/currencies/usd.json','https://api.exchangerate-api.com/v4/latest/USD'];
+
+/* TRẠNG THÁI */
+let S={l:(navigator.language||'en').slice(0,2),z:['VN','CN']};
+if(!LG[S.l])S.l='en';
+try{const s=JSON.parse(localStorage.getItem('lg_set_v2'));if(s&&LG[s.l]&&Array.isArray(s.z)&&s.z.every(k=>k in C))S=s}catch(e){}
+if(!CUR.includes(S.h))S.h=HOME[S.l];
+const T=k=>LG[S.l][k],saveS=()=>{try{localStorage.setItem('lg_set_v2',JSON.stringify(S))}catch(e){}};
+let R={r:DEF,m:{},t:0,src:'',mode:'def'};
+try{const c=JSON.parse(localStorage.getItem('lg_rates_v2'));if(c&&c.r)R={r:Object.assign({},DEF,c.r),m:c.m||{},t:c.t||0,src:c.src||'',mode:c.mode==='live'?'saved':(c.mode||'def')}}catch(e){}
+const saveR=()=>{try{localStorage.setItem('lg_rates_v2',JSON.stringify(R))}catch(e){}};
+
+/* TIỆN ÍCH */
+const rt=(a,b)=>R.m[a+'>'+b]||(R.m[b+'>'+a]?1/R.m[b+'>'+a]:R.r[b]/R.r[a]);
+const nf=(x,d)=>x.toLocaleString(LOC[S.l],{maximumFractionDigits:d});
+const dec=c=>'VND JPY KRW IDR'.includes(c)?0:2;
+const row=(a,b,h)=>'<div class="r'+(h?' hl':'')+'"><span>'+a+'</span><b>'+b+'</b></div>';
+const money=(v,c)=>row(c,nf(v,dec(c)),c===S.h)+(c===S.h?'':row(S.h,nf(v*rt(c,S.h),dec(S.h)),1));
+const cn=k=>{let n=k.slice(0,2);try{n=new Intl.DisplayNames([LOC[S.l]],{type:'region'}).of(n)}catch(e){}return n+(C[k][3]?' ('+C[k][3]+')':'')};
+const hue=k=>[...k].reduce((a,c)=>(a*31+c.charCodeAt(0))%360,7);
+const FM={},fm=tz=>FM[tz]||(FM[tz]=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',weekday:'short',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}));
+
+/* ĐỒNG HỒ + GIỜ LÀM VIỆC TRÙNG NHAU */
+function renderClocks(){
+ $('ck').innerHTML=S.z.map(k=>'<div class="clk" style="background:hsl('+hue(k)+',45%,28%)"><button class="x" data-k="'+k+'">×</button><b>'+cn(k)+'</b><small id="o-'+k+'"></small><div class="t" id="t-'+k+'"></div><div class="d" id="d-'+k+'"></div><span class="st" id="s-'+k+'"></span></div>').join('');
+}
+function buildAz(){
+ $('az').innerHTML='<option value="">+ '+T('add')+'</option>'+Object.keys(C).filter(k=>!S.z.includes(k)).map(k=>'<option value="'+k+'">'+cn(k)+'</option>').join('');
+}
+function ovl(z,now){
+ let s=-1;
+ for(let i=0;i<672;i++){
+  const t=now+i*9e5,all=z.every(x=>{const d=new Date(t+x[0]*6e4),h=d.getUTCHours()+d.getUTCMinutes()/60,w=d.getUTCDay();return w>0&&w<6&&h>=x[1]&&h<x[2]});
+  if(all&&s<0)s=i;
+  if(!all&&s>=0)return[s*15,(i-s)*15];
+ }
+ return s<0?null:[s*15,0];
+}
+function tick(){
+ const now=Date.now(),W=LG[S.l].wd,z=[];
+ S.z.forEach(k=>{
+  const c=C[k],p={};
+  fm(c[0]).formatToParts(now).forEach(x=>p[x.type]=x.value);
+  const h=+p.hour%24,w=D.indexOf(p.weekday),wk=w>0&&w<6,on=wk&&h>=c[1]&&h<c[2],o=Math.round((Date.UTC(p.year,p.month-1,p.day,h,p.minute,p.second)-Math.floor(now/1000)*1000)/6e4),a=Math.abs(o),s=$('s-'+k);
+  z.push([o,c[1],c[2]]);
+  $('o-'+k).textContent='UTC'+(o<0?'-':'+')+Math.floor(a/60)+(a%60?':'+pad(a%60):'');
+  $('t-'+k).textContent=pad(h)+':'+p.minute+':'+p.second;
+  $('d-'+k).textContent=W[w]+' '+p.year+'-'+p.month+'-'+p.day;
+  s.textContent=(on?'● ':'○ ')+T(on?'on':wk?'off':'we');
+  s.className='st '+(on?'on':'off');
+ });
+ const e=$('ov'),r=z.length>1?ovl(z,now):0;
+ e.textContent=z.length<2?'':!r?T('ov3'):r[0]?ph(T('ov2'),{d:fd(r[0]),l:fd(r[1])}):ph(T('ov1'),{d:fd(r[1])});
+ e.className='ovl'+(r&&!r[0]?' ok':'');
+}
+
+/* TỶ GIÁ: 5 nguồn chạy song song, nguồn nào về trước dùng nguồn đó */
+const pair=()=>[$('cf').value,$('ct').value];
+function badge(note){
+ const p=pair(),m=(R.m[p[0]+'>'+p[1]]||R.m[p[1]+'>'+p[0]])?'man':R.mode;
+ $('bd').textContent=T('b_'+m);$('bd').className='st '+{live:'ok',saved:'warn',man:'info',def:'off'}[m];
+ $('info').textContent=(R.t?T('upd')+' '+new Date(R.t).toLocaleString(LOC[S.l])+(R.src?' '+T('from')+' '+R.src:''):T('none'))+(note?' '+note:'');
+ $('rf').disabled=false;
+}
+function setRv(){
+ const p=pair();
+ $('rl').textContent=T('rate')+': 1 '+p[0]+' = … '+p[1];
+ $('rv').value=+rt(p[0],p[1]).toPrecision(6);
+ badge();
+}
+function get(u){
+ return new Promise((ok,no)=>{
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),5000);
+  fetch(u,{signal:c.signal,cache:'no-store'}).then(r=>r.json()).then(j=>{
+   const m=j.rates||j.usd,r={};
+   CUR.forEach(k=>{const v=+(m[k]||m[k.toLowerCase()]);if(!(v>0))throw 0;r[k]=v});
+   clearTimeout(t);ok({r:r,src:u.split('/')[2]});
+  }).catch(()=>{clearTimeout(t);no()});
+ });
+}
+function load(){
+ $('rf').disabled=true;$('info').textContent=T('ld');
+ let n=0,done=0;
+ SRC.forEach(u=>get(u).then(x=>{
+  if(done)return;done=1;
+  R.r=x.r;R.t=Date.now();R.src=x.src;R.mode='live';saveR();setRv();all();
+ },()=>{
+  if(++n===SRC.length&&!done){if(R.mode==='live')R.mode='saved';badge(T('fail'))}
+ }));
+}
+
+/* MÁY TÍNH */
+function conv(){
+ const p=pair(),a=num('amt')*(1+num('fee')/100);
+ $('conv').innerHTML=row(p[0],nf(a,dec(p[0])))+row(p[1],nf(a*rt(p[0],p[1]),dec(p[1])),1);
+}
+function frt(){
+ const n=num('n'),cbm=num('L')*num('W')*num('H')/1e6*n,real=num('kg')*n,vol=cbm*num('kc'),cw=Math.max(real,vol),
+  cost=($('pu').value==='kg'?cw:cbm)*num('pr');
+ $('fr').innerHTML=row(T('vol'),nf(cbm,3)+' CBM')+row(T('rw'),nf(real,1)+' kg')+row(T('vw'),nf(vol,1)+' kg')+row(T('cw'),nf(cw,1)+' kg',1)
+  +(cbm||real?'<h3>'+T('cont')+'</h3>'+CT.map(c=>row(c[0],'× '+Math.max(Math.ceil(cbm/c[1]),Math.ceil(real/(c[2]*1000))))).join(''):'')
+  +(cost?'<h3>'+T('cost')+'</h3>'+money(cost,$('pc').value):'');
+}
+function lnd(){
+ const c=$('gc').value,g=num('gv'),f=num('gf'),cif=(g+f)*(1+num('gi')/100),du=cif*num('gd')/100,vat=(cif+du)*num('gt')/100,tot=cif+du+vat+num('go'),q=num('gq')||1,d=dec(c);
+ $('lr').innerHTML=row('CIF',nf(cif,d))+row(T('duty'),nf(du,d))+row('VAT/GST',nf(vat,d))+(tot?'<h3>'+T('land')+'</h3>'+money(tot,c)+'<h3>'+T('unit')+'</h3>'+money(tot/q,c):'');
+}
+const all=()=>{conv();frt();lnd()};
+
+/* NGÔN NGỮ */
+function applyLang(){
+ document.documentElement.lang=S.l;document.title=T('t');$('lg').value=S.l;
+ document.querySelectorAll('[data-i]').forEach(e=>e.textContent=T(e.dataset.i));
+ buildAz();renderClocks();tick();setRv();all();
+}
+
+/* SỰ KIỆN */
+['input','change'].forEach(e=>{$('c2').addEventListener(e,conv);$('c3').addEventListener(e,frt);$('c4').addEventListener(e,lnd)});
+['cf','ct'].forEach(id=>$(id).addEventListener('change',()=>{setRv();conv()}));
+$('mode').addEventListener('change',()=>{$('kc').value=$('mode').value;frt()});
+$('rv').addEventListener('input',()=>{
+ const v=num('rv'),p=pair();
+ if(v>0){delete R.m[p[1]+'>'+p[0]];R.m[p[0]+'>'+p[1]]=v;saveR();badge();all()}
+});
+$('rf').onclick=()=>{const p=pair();delete R.m[p[0]+'>'+p[1]];delete R.m[p[1]+'>'+p[0]];saveR();setRv();all();load()};
+$('lg').onchange=()=>{S.l=$('lg').value;saveS();applyLang()};
+$('hc').onchange=()=>{S.h=$('hc').value;saveS();all()};
+$('az').onchange=()=>{const k=$('az').value;if(k){S.z.push(k);saveS();renderClocks();buildAz();tick()}};
+$('ck').onclick=e=>{const k=e.target.dataset.k;if(k){S.z=S.z.filter(x=>x!==k);saveS();renderClocks();buildAz();tick()}};
+
+/* KHỞI ĐỘNG */
+const co=CUR.map(c=>'<option>'+c).join('');
+['cf','ct','pc','gc','hc'].forEach(id=>$(id).innerHTML=co);
+$('hc').value=S.h;$('cf').value='CNY';$('ct').value=S.h==='CNY'?'USD':S.h;$('pc').value='CNY';$('gc').value='CNY';
+applyLang();load();
+setInterval(tick,1000);setInterval(load,6e5);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-R.t>3e5)load()});
+addEventListener('online',load);
+</script>
+</body>
+</html>
